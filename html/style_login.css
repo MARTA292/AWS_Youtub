@@ -1,0 +1,19 @@
+
+
+#logincontainer {
+    position: relative;
+}
+
+.loginwrapper {
+    width: 50%;
+    height: 50%;
+    margin: auto;
+    padding-top: 5rem;
+}
+
+body {
+    background-image: url('./fondo.jpeg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="./style_login.css">
+        <title>Recover your Password</title>
+        
+        <script>
+                $(document).ready(function(){
+                        $("button").click(function(){
+                                var vop2=document.getElementById("username").value;
+                                var vemail=document.getElementById("email_address").value;
+                                var vpassword=document.getElementById("password").value;
+                                var vfrase=document.getElementById("recovery_phrase").value;
+
+                                var vres="";
+                                var asd=$.get(
+                                "http://44.193.104.138/login_gateway.php",
+
+                                    {method : "recovery", username : vop2, email : vemail, password : vpassword, frase : vfrase},
+                                    function(data) {
+
+                                        function jsonEscape(str)  {
+                                                return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+                                        }
+
+                                       var json=JSON.parse(data);
+                                       json=JSON.parse(json);
+
+                                       window.location.replace(json.redirect);
+
+                                    }
+                                )
+                                  .done(function() {
+                                    alert( "second success" );
+                                  })
+                                  .fail(function() {
+                                    alert( "error" );
+                                  })
+
+                                asd.always(function() {
+                                alert( "second finished" );
+                                });
+
+
+                  });
+                });
+        </script>
+
+        
+    </head>
+    <body>
+        <div class="container-fluid" id="logincontainer" padding="0">
+            <div class="loginwrapper" padding="0">
+                <div class="jumbotron" padding="0">
+                    <h1>Recover your Password</h1> 
+                    <form name="recoverPass">
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label for="username">Nombre de usuario (username)</label>
+                            <input type="text" name="username" class="form-control" id="username" aria-describedby="emailHelp" placeholder="Enter your username">
+                            <small id="emailHelp" class="form-text text-muted">Nota: no utilices el email como nombre de usuario.</small>
+                        </div>
+
+                        <!-- Email address -->
+                        <div class="form-group">
+                            <label for="email_address">Email</label>
+                            <input type="email" name="email_address" class="form-control" id="email_address" aria-describedby="emailHelp" placeholder="Enter your email address">
+                        </div>
+
+                        <!-- Passphrase -->
+                        <div class="form-group">
+                            <label for="recovery_phrase">Pregunta de seguridad: Cual es tu pelicula favorita?</label>
+                            <input type="recovery_phrase" name="recovery_phrase" class="form-control" id="recovery_phrase" placeholder="Enter your answer">
+                            <small id="emailHelp" class="form-text text-muted">La respuesta se usara como metodo de recuperacion de password.</small>
+                        </div>
+						
+						<!-- New Password -->
+                        <div class="form-group">
+                            <label for="password">New password</label>
+                            <input type="password" name="password" class="form-control" id="password" placeholder="Enter a secure password*">
+                            <small id="emailHelp" class="form-text text-muted">No olvides esta contraseña</small>
+                        </div>
+                    </form>
+                    <button class="btn btn-primary">Recuperar cuenta</button>
+                    <p>Ya tienes una cuenta? <a href="login.html">Inicia sesion aqui!</a></p>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

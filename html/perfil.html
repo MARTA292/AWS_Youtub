@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./style_inicio.css">
+	<title>Cuenta</title>
+<script>
+
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+	sURLVariables = sPageURL.split('&'),
+	sParameterName,
+	i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+	sParameterName = sURLVariables[i].split('=');
+
+	if (sParameterName[0] === sParam) {
+	    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+	}
+    }
+    return false;
+};
+
+$(document).ready(function(){
+	
+	var usuario = getUrlParameter('user');
+	
+	var asd=$.get(
+		"http://44.193.104.138/login_gateway.php",
+
+		    {method : "mostrarVideos", token : usuario},
+		    function(data) {
+
+		        function jsonEscape(str)  {
+		                return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+		        }
+
+		       var json=JSON.parse(data);
+		       json=JSON.parse(json);
+			   console.log(json);
+			   rellenarVideos(json);
+
+		       if (json.redirect == "login.html"){
+                          window.location.replace(json.redirect);
+                      }
+                      else{
+			    $("#usuario").text("Usuario : "+json.usuario);
+                      }
+
+
+		    }
+		)
+		  .done(function() {
+		    alert( "second success" );
+		  })
+		  .fail(function() {
+		    alert( "error" );
+		  })
+
+		asd.always(function() {
+		alert( "second finished" );
+		});
+
+}); 
+
+function rellenarVideos(json){
+	var text = "Your browser does not support the video tag.";
+
+	/*
+	var length = Object.keys(json).length;
+	console.log(length);
+	//console.log(json.path[0], json.titulos[0]);
+	//{path: Array(4), titulos: Array(4)}
+	for(var i = 0; i < length; i++){
+		console.log(json.path[i] + ", " + json.titulos[i]);
+		//Creamos fila
+		const filaNueva = document.createElement("tr");
+		//Creamos celda del video, poenemos valor del path
+		const vpath = document.createElement('td');
+		vpath.innerText = json.path[i];
+		//const contenido = document.createElement("video");
+		//const fuente = document.createElement("source");
+		//console.log(json.path[i]);
+		//fuente.src(json.path[i]);
+					
+		//Creamos celda del titulo, poenemos valor
+		const vtitulo = document.createElement('td');
+		vtitulo.innerText = json.titulos[i];
+		//const votos = document.createElement('td');
+		//const megusta = document.createElement('td');
+					
+		//Añadimos celdas a la fila 
+		filaNueva.appendChild(vpath);
+		filaNueva.appendChild(vtitulo);
+		//Añadimos la fila a la tabla 
+		document.getElementById("table_body").appendChild(filaNueva);
+		*/
+	}
+}
+
+
+function uploadvideo(){
+	var usuario = getUrlParameter('user');
+	window.location.replace(href="upload.html?user="+usuario);
+}
+
+
+</script>
+
+	<body >
+		<div class="container" id="navegador">
+			<div class="d-flex justify-content-between align-items-center p-3">
+				<!-- Logo Youtube -->
+				<img src="https://static3-sevilla.abc.es/media/tecnologia/2020/06/29/s/descargar-videos-youtube-k1KB--620x349@abc.jpg" width="200" height="100">
+				
+				<nav class="navbar justify-content-between">
+				  <form class="form-inline">
+					<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				  </form>
+				</nav>
+				
+				<!-- Logo Cuenta -->
+				<div id="card">
+					<img src="./usuario.jpg" class="rounded-circle" width="80">
+					<p class="mb-0 text-center" id="name">Nombre</p> <span class="text-muted d-block mb-2" id="usuario"></span>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Navegador -->
+		<ul class="nav nav-tabs">
+		  <li class="nav-item">
+			<a class="nav-link" href="./reproducir.html">Inicio</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link active" href="#">Mis videos</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="#">Videos que me gustan</a>
+		  </li>
+		  <li>
+			<button class="btn btn-primary" onclick=uploadvideo()>Subir video</button>
+		  </li>
+		</ul>
+		
+		<div class="container-fluid">
+        <!-- Si queremos que no solo ocupe el container sino todo el ancho de la pantalla  -->
+
+        <div class="row d-flex justify-content-between align-items-center p-3 border">
+            <!-- Perfil -->
+			<div class="col-md-2" style="margin-left: 6%;">
+                <img src="./usuario.jpg" class="rounded-circle" width="200">
+            </div>
+			<div class="col-md-2">
+				<h4 class="mb-0">Nombre</h4> <span class="text-muted d-block mb-2" id="usuario"></span> 
+            </div>
+			
+			<!-- Ultimo video subido -->
+			<div class="col-md-6">
+			<div class="col" style="margin-left: 5%;">
+                <h1>Ultimo video subido</h1>
+				<video width="500" height="300" controls>
+					<source src="" type="video/mp4">
+				</video>
+				<p></p>
+            </div>
+			</div>
+        </div>
+		
+		<!-- Tabla de los videos -->
+		<div class="row p-3">
+		<table class="table table-striped table-bordered table-hover table-responsive-sm " id="tabla_resultados">
+			<tbody id="table_body">
+				<video width="500" height="300" controls>
+					<source src="" type="video/mp4">
+				</video>
+				<p></p>
+				
+				<video width="500" height="300" controls>
+					<source src="" type="video/mp4">
+				</video>
+				<p></p>
+				
+				<video width="500" height="300" controls>
+					<source src="" type="video/mp4">
+				</video>
+				<p></p>
+			</tbody>
+		</table>
+		</div>
+				
+		<!-- Otros videos de la cuenta --
+		<div class="row p-3">
+			<div class="row">
+				<div class="col-3 border">
+					<video width="500" height="300" controls>
+						<source src="http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/batman&catwoman.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p><a href="https://www.youtube.com/watch?v=qwNEnOyDSeU">Trailer Batman & Catwoman</a></p>
+				</div>
+				<div class="col-3 border">
+					<video width="500" height="300" controls>
+						<source src="http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/cuarentones.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p><a href="https://www.youtube.com/watch?v=qwNEnOyDSeU">Trailer Cuarentones</a></p>
+				</div>
+				<div class="col-3 border">
+					<video width="500" height="300" controls>
+						<source src="http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/deathonthenile.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p><a href="https://www.youtube.com/watch?v=qwNEnOyDSeU">Trailer Death on the Nile</a></p>
+				</div>
+				<div class="col-3 border">
+					<video width="500" height="300" controls>
+						<source src="http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/operacionfortune.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p><a href="https://www.youtube.com/watch?v=qwNEnOyDSeU">Trailer Operacion Fortune</a></p>
+				</div>
+			</div>
+		</div>  -->
+
+	</body>
+</html>
+
+

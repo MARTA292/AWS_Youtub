@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./style_login.css">
+	<title>Upload</title>
+<script>
+
+function getAWSKeys() {
+	var asd=$.get(
+ 			"http://44.193.104.138/keys_gateway.php",
+		    {},
+		    function(data) {
+
+		       var json=JSON.parse(data);
+                       json=JSON.parse(json);
+		       document.getElementById("Policy").value = json.stringToSign;
+		       document.getElementById("X-Amz-Credential").value = json.xAmzCredential;		
+		       document.getElementById("X-Amz-Date").value = json.amzDate;		
+		       document.getElementById("X-Amz-Signature").value = json.stringSigned;	
+		       document.getElementById("X-Amz-Security-Token").value = json.securityToken;	
+			
+		    }
+		)
+  
+}
+
+function setKeyFilename() {
+	document.getElementById("key").value = document.getElementById("file").value.substring(document.getElementById("file").value.lastIndexOf('\\')+1);	
+}
+
+</script>
+
+
+
+</head>
+<body onload="getAWSKeys()">
+
+<div class="container-fluid" id="logincontainer" padding="0">
+    <div class="jumbotron vertical-center my-5 p-4">
+		<h1 class="text-center">Subir video</h1>
+		<!-- Video name -->
+		<div class="form-group">
+			<label for="videoname">Titulo del video</label>
+			<input type="text" name="videoname" class="form-control" id="videoname" aria-describedby="emailHelp" placeholder="Enter video title">
+		</div>
+			
+		<!-- Etiquetas -->
+		<div class="form-group">
+			<label for="etiquetas">Etiquetas</label>
+			<input type="text" name="etiquetas" class="form-control" id="etiquetas" aria-describedby="emailHelp" placeholder="Enter tags of the video">
+		</div>
+		
+		<form action="http://bucketyoutubedm.s3.us-east-1.amazonaws.com/" onsubmit="setKeyFilename()" method="post" enctype="multipart/form-data">
+			<input type="hidden"  id="X-Amz-Credential" name="X-Amz-Credential" value="" />
+			<input type="hidden"  id="X-Amz-Date" name="X-Amz-Date" value="" />
+			<input type="hidden"  id="Policy" name="Policy" value="" />
+			<input type="hidden"   id="X-Amz-Signature" name="X-Amz-Signature" value="" />
+		  
+			<input type="hidden" id="key" name="key" value="fichero.sln" /><br />
+			<input type="hidden" name="acl" value="public-read" />
+			<input type="hidden" name="success_action_redirect" value="http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/perfil.html" />
+			<input type="hidden"   name="X-Amz-Algorithm" value="AWS4-HMAC-SHA256" />
+			<input type="hidden" id="X-Amz-Security-Token" name="X-Amz-Security-Token" value=""/>
+		   Select file to upload:
+			<input type="file" name="file" id="file">
+			<input type="submit" value="Upload Video" name="submit" >
+		</form>
+	</div>
+</div>
+
+</body>
+</html>
+
