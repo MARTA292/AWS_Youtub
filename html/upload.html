@@ -9,14 +9,33 @@
 	<title>Upload</title>
 <script>
 
+
+function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+	sURLVariables = sPageURL.split('&'),
+	sParameterName,
+	i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+		sParameterName = sURLVariables[i].split('=');
+
+		if (sParameterName[0] === sParam) {
+			return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+		}
+    }
+    return false;
+}
+
+
 function getAWSKeys() {
+
 	var asd=$.get(
  			"http://44.193.104.138/keys_gateway.php",
 		    {},
 		    function(data) {
 
 		       var json=JSON.parse(data);
-                       json=JSON.parse(json);
+               json=JSON.parse(json);
 		       document.getElementById("Policy").value = json.stringToSign;
 		       document.getElementById("X-Amz-Credential").value = json.xAmzCredential;		
 		       document.getElementById("X-Amz-Date").value = json.amzDate;		
@@ -25,11 +44,62 @@ function getAWSKeys() {
 			
 		    }
 		)
-  
 }
 
 function setKeyFilename() {
-	document.getElementById("key").value = document.getElementById("file").value.substring(document.getElementById("file").value.lastIndexOf('\\')+1);	
+	var tuser = getUrlParameter("user");
+	var user;
+	var asd=$.get(
+		"http://44.193.104.138/login_gateway.php",
+		{method : "validacionUsuario", token : tuser},
+		function(data) {
+
+			var json=JSON.parse(data);
+			json=JSON.parse(json);
+			
+			user = json.usuario;		
+		}
+	).done(function() {
+        document.getElementById("key").value = user+"/"+document.getElementById("file").value.substring(document.getElementById("file").value.lastIndexOf('\\')+1);
+		console.log(document.getElementById("key").value)
+		console.log(document.getElementById("file").value)
+		
+		rellenarDatos(user);
+    })
+	//rellenarDatos();
+	sleepFor(5000);
+}
+
+function sleepFor(sleepDuration){
+
+    var now = new Date().getTime();
+
+    while(new Date().getTime() < now + sleepDuration){ /* Do nothing */ }
+
+}
+
+
+function rellenarDatos(vusuario) {
+	var videoname=document.getElementById("videoname").value;
+	var etiquetas=document.getElementById("etiquetas").value;
+	console.log("entrando en rellenar datos");
+	console.log(videoname)
+	console.log(etiquetas)
+	console.log(vusuario)
+	vpath = document.getElementById("key").value;
+	console.log(vpath)
+	var asdf=$.get(
+		"http://44.193.104.138/login_gateway.php",
+		{method : "subirVideo", titulo : videoname, tag : etiquetas, usuario : vusuario, path : vpath},
+		function(data) {
+
+			var json=JSON.parse(data);
+			json=JSON.parse(json);
+			console.log("ha cargado un json")
+            window.location.replace(json.redirect+"?user="+getUrlParameter('user'));
+
+		}
+	).done(function(){});
 }
 
 </script>
@@ -63,7 +133,7 @@ function setKeyFilename() {
 			<input type="hidden" id="key" name="key" value="fichero.sln" /><br />
 			<input type="hidden" name="acl" value="public-read" />
 			<input type="hidden" name="success_action_redirect" value="http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/perfil.html" />
-			<input type="hidden"   name="X-Amz-Algorithm" value="AWS4-HMAC-SHA256" />
+			<input type="hidden" name="X-Amz-Algorithm" value="AWS4-HMAC-SHA256" />
 			<input type="hidden" id="X-Amz-Security-Token" name="X-Amz-Security-Token" value=""/>
 		   Select file to upload:
 			<input type="file" name="file" id="file">
