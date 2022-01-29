@@ -38,21 +38,35 @@
 							const filaNueva = document.createElement("tr");
 							//Creamos celda del video, poenemos valor del path
 							const vpath = document.createElement('td');
-							vpath.innerText = json.path[i];
-							//const contenido = document.createElement("video");
-							//const fuente = document.createElement("source");
+							//vpath.innerText = json.path[i];
+							const contenido = document.createElement("video");
+							contenido.setAttribute("width", 500);
+							contenido.setAttribute("height", 300);
+							contenido.controls = true;
+							const fuente = document.createElement("source");
 							//console.log(json.path[i]);
-							//fuente.src(json.path[i]);
+							fuente.setAttribute("src", json.path[i]);
+							fuente.setAttribute("type", "video/mp4");
+							contenido.appendChild(fuente);
+							contenido.load();
+							vpath.appendChild(contenido);
 							
 							//Creamos celda del titulo, poenemos valor
 							const vtitulo = document.createElement('td');
 							vtitulo.innerText = json.titulos[i];
 							//const votos = document.createElement('td');
-							//const megusta = document.createElement('td');
-							
+							const megusta = document.createElement('button');
+							megusta.classList.add("btn-primary");
+							//var button = document.createElement('i');
+							//button.classList.add("bi-heart-fill");
+							//megusta.append(button);
+							megusta.innerText = "Like";
+							//var button='<button class="btn btn-primary"><i class="bi-heart-fill"></i>Like+</button>';
+														
 							//Añadimos celdas a la fila 
 							filaNueva.appendChild(vpath);
 							filaNueva.appendChild(vtitulo);
+							filaNueva.appendChild(megusta);
 							//Añadimos la fila a la tabla 
 							document.getElementById("table_body").appendChild(filaNueva);
 					   }
@@ -60,15 +74,8 @@
 				       //window.location.replace(json.redirect);
 				    }
 				)
-				  .done(function() {
-				    alert( "second success" );
-				  })
 				  .fail(function() {
 				    alert( "error" );
-				  })
-
-				asd.always(function() {
-				alert( "second finished" );
 				});
 
 
@@ -116,13 +123,10 @@
 	<!-- Navegador -->
 	<ul class="nav nav-tabs">
 	  <li class="nav-item">
-		<a class="nav-link active" href="#">Inicio</a>
+		<a class="nav-link" href="./inicio.html">Inicio</a>
 	  </li>
 	  <li class="nav-item">
-		<a class="nav-link" href="#">Videos que me gustan</a>
-	  </li>
-	  <li class="nav-item">
-		<a class="nav-link" href="./busqueda.html">Buscar</a>
+		<a class="nav-link active" href="./busqueda.html">Buscar</a>
 	  </li>
 	  <li class="nav-item">
 		<a class="nav-link" href="./perfil.html">Tu canal</a>
@@ -148,35 +152,7 @@
 		<tbody id="table_body" >
         </tbody>
 	</table>
-	<!--
-	<div class="row p-3">
-		<div class="col-3">
-			<img src="https://i.ytimg.com/vi/qwNEnOyDSeU/maxresdefault.jpg" width="200" height="100">
-		</div><div class="col-3">
-			<p><a href="https://www.youtube.com/watch?v=qwNEnOyDSeU"> Cómo Hacer un Vídeo para Youtube Sin Programas </a></p>
-		</div>
-	</div>
-	<div class="row p-3">
-		<div class="col-3">
-			<img src="https://i.ytimg.com/vi/-S-7w7s_fIM/maxresdefault.jpg" width="200" height="100">
-		</div><div class="col-3">
-			<p><a href="https://youtu.be/-S-7w7s_fIM">11 Mejores programas para editar videos para YouTube</a></p>
-		</div>
-	</div>
-	<div class="row p-3">
-		<div class="col-3">
-			<img src="https://i.ytimg.com/vi/qwNEnOyDSeU/maxresdefault.jpg" width="200" height="100">
-		</div><div class="col-3">
-			<p><a href="https://www.youtube.com/watch?v=qwNEnOyDSeU"> Cómo Hacer un Vídeo para Youtube Sin Programas </a></p>
-		</div>
-	</div>
-
-   <!-- <div class="jumbotron vertical-center my-5 p-4">
-		<h1 class="text-center">Subir video</h1>
-		<form action="http://bucketyoutubedm.s3.us-east-1.amazonaws.com/" onsubmit="setKeyFilename()" method="post" enctype="multipart/form-data">
-		</form>
-		
-	</div> -->
+	
 </div>
 
 </body>

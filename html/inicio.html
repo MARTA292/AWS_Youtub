@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <!-- Bootstrap Font Icon CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+	
+	<link rel="stylesheet" href="./style_inicio.css">
+	<title>Inicio</title>
+<script>
+
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+	sURLVariables = sPageURL.split('&'),
+	sParameterName,
+	i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+	sParameterName = sURLVariables[i].split('=');
+
+	if (sParameterName[0] === sParam) {
+	    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+	}
+    }
+    return false;
+};
+
+</script>
+
+	<body >
+		<div class="container" id="navegador">
+			<div class="d-flex justify-content-between align-items-center p-3">
+				<!-- Logo Youtube -->
+				<img src="https://static3-sevilla.abc.es/media/tecnologia/2020/06/29/s/descargar-videos-youtube-k1KB--620x349@abc.jpg" width="200" height="100">
+				
+				<nav class="navbar justify-content-between">
+				  <form class="form-inline">
+					<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+					<button class="btn btn-outline-success my-2 my-sm-0" type="submit"><a href="./busqueda.html"> Search</a></button>
+				  </form>
+				</nav>
+				
+				<!-- Logo Cuenta -->
+				<div id="card">
+					<img src="./usuario.jpg" class="rounded-circle" width="80">
+					<p class="mb-0 text-center" id="name">Nombre</p> <span class="text-muted d-block mb-2" class="usuario"></span>
+				</div>
+			</div>
+		</div>
+		
+		<!-- Navegador -->
+		<ul class="nav nav-tabs">
+		  <li class="nav-item">
+			<a class="nav-link active" href="#">Inicio</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="./busqueda.html">Buscar</a>
+		  </li>
+		  <li class="nav-item">
+			<a class="nav-link" href="./perfil.html">Tu canal</a>
+		  </li>
+		</ul>
+		
+		<div class="row p-3">
+			<div class="row">
+				<div class="col-4 border">
+					<video id="cvideo1" width="420" height="300" controls>
+						<source id="video1" src="https://bucketyoutubedm.s3.amazonaws.com/apruebanosestamoshechosparaentendernos.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p id="pVideo1">Estamos hechos para entendernos</p>
+					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
+				</div>
+				<div class="col-4 border">
+					<video id="cvideo2" width="420" height="300" controls>
+						<source id="video2" src="https://bucketyoutubedm.s3.amazonaws.com/batman%26catwoman.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p id="pVideo2">Batman & Catwoman</p>
+					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
+				</div>
+				<div class="col-4 border">
+					<video id="cvideo3" width="420" height="300" controls>
+						<source id="video3" src="https://bucketyoutubedm.s3.amazonaws.com/cuarentones.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p id="pVideo3">Cuarentones</p>
+					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
+					
+				</div>
+				
+			</div>
+		</div>  
+		<div class="row p-3">
+			<div class="row">
+				<div class="col-4 border">
+					<video id="cvideo1" width="420" height="300" controls>
+						<source id="video1" src="https://bucketyoutubedm.s3.amazonaws.com/deadpool.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p id="pVideo1">Deadpool</p>
+					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
+				</div>
+				<div class="col-4 border">
+					<video id="cvideo2" width="420" height="300" controls>
+						<source id="video2" src="https://bucketyoutubedm.s3.amazonaws.com/deathonthenile.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p id="pVideo2">Death on the Nile</p>
+					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
+				</div>
+				<div class="col-4 border">
+					<video id="cvideo3" width="420" height="300" controls>
+						<source id="video3" src="https://bucketyoutubedm.s3.amazonaws.com/operationfortune.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+					<p id="pVideo3">Operation Fortune</p>
+					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
+					
+				</div>
+				
+			</div>
+		</div>  
+	  
+
+	</body>
+</html>
