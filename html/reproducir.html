@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset=UTF-8>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -12,32 +14,70 @@
 	<link rel="stylesheet" href="./style_inicio.css">
 	<title>Reproducir</title>
 <script>
-
+var contador = 0;
 var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
 	sURLVariables = sPageURL.split('&'),
 	sParameterName,
 	i;
-
+	//console.log(sPageURL);
+	//console.log("Hola");
     for (i = 0; i < sURLVariables.length; i++) {
-	sParameterName = sURLVariables[i].split('=');
-
-	if (sParameterName[0] === sParam) {
-	    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-	}
+		sParameterName = sURLVariables[i].split('=');
+		//console.log("parametro: "+sParameterName);
+		if (sParameterName[0] === sParam) {
+			//console.log("parametro: "+sParameterName[1]);
+			return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+		}
     }
     return false;
 };
 
 $(document).ready(function(){
+
+	var usuario = getCookie('user');
+
+
+	var asd=$.get(
+		"http://44.193.104.138/login_gateway.php",
+
+		    {method : "validacionUsuario", token : usuario},
+		    function(data) {
+
+		        function jsonEscape(str)  {
+		                return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+		        }
+
+		       var json=JSON.parse(data);
+		       json=JSON.parse(json);
+
+		       if (json.redirect == "login.html"){
+                          window.location.replace(json.redirect);
+                      }
+                      else{
+			    $("#usuario").text(json.usuario);
+                      }
+
+
+		    }
+		)
+
+    sleepFor(3000)
 	
-	var usuario = getUrlParameter('user');
-	var vpath = "https://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/deadpool.mp4";
+	//var usuario = getUrlParameter('user');
+	//var vpath = "https://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/deadpool.mp4";
+	var vpath = getUrlParameter('path');
+	console.log(vpath);
+	const sour = document.getElementById("svideo");
+	sour.setAttribute("src", vpath);
+	const video = document.getElementById('cvideo');
+	video.load();
+	console.log(document.getElementById("svideo").src);
 	
 	var asd=$.get(
 		"http://44.193.104.138/login_gateway.php",
 
-		    {method: "reproducir", token : usuario, path : vpath},
+		    {method: "reproducir", path : vpath},
 		    function(data) {
 
 		        function jsonEscape(str)  {
@@ -59,8 +99,9 @@ $(document).ready(function(){
 
 function mostrarComentarios(json){
 	console.log(json);
-	console.log(json.voto[0]);
+	console.log(json.voto);
 	document.getElementById("likes").innerText = json.voto;
+	document.getElementById("titulo").innerText = json.titulo;
 	//var length = Object.keys(json).length;
 	var length = json.comentarios.length;
 	console.log(length);
@@ -69,10 +110,10 @@ function mostrarComentarios(json){
 		const filaNueva = document.createElement("tr");
 		//Creamos celda del usuario que ha comentado
 		const usuario = document.createElement('td');
-		usuario.innerText = json.comentarios[i];
+		usuario.innerText = json.comentarios[i][0];
 		//Creamos celda de lo que ha comentado
 		const comentario = document.createElement('td');
-		comentario.innerText = json.comentarios[i+1];
+		comentario.innerText = json.comentarios[i][1];
 		//const votos = document.createElement('td');
 		//const megusta = document.createElement('td');
 							
@@ -84,13 +125,100 @@ function mostrarComentarios(json){
 	}
 }
 
-/*
-function uploadvideo(){
-	var usuario = getUrlParameter('user');
-	window.location.replace(href="upload.html?user="+usuario);
-}
-*/
+function subircomentario(){
+	var text = document.getElementById("comentario").value;
+	var vusuario = $("#usuario").text();
+	var vpath = getUrlParameter('path');
+	var asd=$.get(
+		"http://44.193.104.138/login_gateway.php",
 
+		    {method: "comentarios", path : vpath, user : vusuario, comentario : text},
+		    function(data) {
+
+		        function jsonEscape(str)  {
+		                return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+		        }
+
+		       var json=JSON.parse(data);
+		       json=JSON.parse(json);
+		    }
+		)
+		.fail(function() {
+		   alert( "error" );
+		})
+	sleepFor(3000)
+
+
+	//$('textarea#comentario').value;
+	console.log(text);
+	const filaNueva = document.createElement("tr");
+	const usuario = document.createElement('td');
+	usuario.innerText = $("#usuario").text();
+	console.log(usuario);
+	const comentario = document.createElement('td');
+	comentario.innerText = text;
+	filaNueva.appendChild(usuario);
+	filaNueva.appendChild(comentario);
+	//Añadimos la fila a la tabla 
+	document.getElementById("table_body").appendChild(filaNueva);
+	
+	document.getElementById("comentario").value = "";
+}
+
+function megusta(){
+	if(contador == 0){
+		contador = 1;
+		voto = document.getElementById("likes").innerText;
+		nvoto = parseInt(voto, 10);
+		document.getElementById("likes").innerText = nvoto+1;
+		
+		vpath = getUrlParameter('path');
+		var asd=$.get(
+			"http://44.193.104.138/login_gateway.php",
+
+				{method: "votos", path : vpath},
+				function(data) {
+
+					function jsonEscape(str)  {
+							return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+					}
+
+				   var json=JSON.parse(data);
+				   json=JSON.parse(json);
+				   document.getElementById("likes").innerText = json.voto;
+
+				}
+			)
+			.fail(function() {
+			   alert( "error" );
+			})
+		sleepFor(3000)
+	}
+}
+
+function getCookie(cname) {
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i <ca.length; i++) {
+		let c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+			return c.substring(name.length, c.length);
+		}
+	}
+	return "";
+}
+
+function sleepFor(sleepDuration){
+
+var now = new Date().getTime();
+
+while(new Date().getTime() < now + sleepDuration){ /* Do nothing */ }
+
+}
 
 </script>
 
@@ -134,20 +262,20 @@ function uploadvideo(){
         <div class="row d-flex justify-content-between align-items-center p-3 border">
             <!-- Video a reproducir -->
 			<div class="row">
-				<video width="600" height="400" controls>
-					<source src="http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/deadpool.mp4" type="video/mp4">
+				<video id="cvideo" width="600" height="400" controls>
+					<source id="svideo" src="" type="video/mp4">
 					Your browser does not support the video tag.
 				</video>
 			</div>
 			<div class="row p-3">
 				<div class="col-4 p-3">
-				<h3>Trailer Deadpool</h3>
+				<h3 id="titulo"></h3>
 				</div>
 				<div class="col-1 align-items-end offset-md-3 p-4">
 					<h4 id="likes"></h4>
 				</div>
 				<div class="col-4 align-items-start p-3">
-					<button type="button" class="btn btn-primary">
+					<button onclick=megusta() type="button" class="btn btn-primary">
 						<i class="bi-heart-fill"></i> Like
 					</button>
 				</div>
@@ -159,6 +287,9 @@ function uploadvideo(){
 					<tbody id="table_body" >
 					</tbody>
 				</table>
+				
+					<textarea id="comentario" name="comentarios" rows="10" cols="40" placeholder="Escribe aquí tus comentarios"></textarea>
+					<input type="submit" onclick=subircomentario() value="Subir Comentario" name="submit" >
 				
 			</div>
         </div>

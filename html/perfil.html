@@ -8,30 +8,30 @@
 	<title>Cuenta</title>
 <script>
 
-var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-	sURLVariables = sPageURL.split('&'),
-	sParameterName,
-	i;
-
-    for (i = 0; i < sURLVariables.length; i++) {
-	sParameterName = sURLVariables[i].split('=');
-
-	if (sParameterName[0] === sParam) {
-	    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+function getCookie(cname) {
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i <ca.length; i++) {
+		let c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+			return c.substring(name.length, c.length);
+		}
 	}
-    }
-    return false;
-};
+	return "";
+}
 
 $(document).ready(function(){
-	
-	var usuario = getUrlParameter('user');
+
+    var usuario = getCookie('user');
 	
 	var asd=$.get(
 		"http://44.193.104.138/login_gateway.php",
 
-		    {method : "mostrarVideos", token : usuario},
+		    {method : "validacionUsuario", token : usuario},
 		    function(data) {
 
 		        function jsonEscape(str)  {
@@ -40,11 +40,30 @@ $(document).ready(function(){
 
 		       var json=JSON.parse(data);
 		       json=JSON.parse(json);
+
+		       if(json.redirect == "login.html"){
+                    window.location.replace(json.redirect);
+                }else{
+					console.log(json.usuario);
+					$("#usuario").text(json.usuario);
+					$("#usuario1").text(json.usuario);
+                }
+		    }
+		)
+
+    sleepFor(3000)
+	
+	var asd=$.get(
+		"http://44.193.104.138/login_gateway.php",
+		    {method : "mostrarVideos", token : usuario},
+		    function(data) {
+		        function jsonEscape(str)  {
+		                return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+		        }
+		       var json=JSON.parse(data);
+		       json=JSON.parse(json);
 			   console.log(json);
-			   console.log(usuario);
 			   rellenarVideos(json);
-			   //$(".nombre").text("Usuario : "+ usuario);
-			   $(".usuario").text("Usuario : "+ usuario);
 			}
 		)
 		.fail(function() {
@@ -54,11 +73,73 @@ $(document).ready(function(){
 }); 
 
 function rellenarVideos(json){
-	var text = "Your browser does not support the video tag.";
 	var length = json.path.length;
 	console.log(length);
+	const videoPrincipal = document.getElementById("video");
+	videoPrincipal.setAttribute("src", json.path[0]);
+	const cvideo = document.getElementById('cvideo');
+	cvideo.load();
+	const vtitulo = document.getElementById('pVideo');
+	vtitulo.innerText = json.titulos[0];
+	var i = 0;
 	//{path: Array(4), titulos: Array(4)}
-	for(var i = 0; i < length; i++){
+	while(i<length){
+		console.log(i);
+		//Colocamos tres videos por fila
+		//Creamos fila
+		const filaNueva = document.createElement("tr");
+		for(var j=0; j<2 && i<length; j++){
+			console.log(j);
+			console.log(length);
+			//Creamos celda del video, poenemos valor del path
+			const vpath = document.createElement('td');
+			//vpath.innerText = json.path[i];
+			const contenido = document.createElement("video");
+			contenido.setAttribute("width", 500);
+			contenido.setAttribute("height", 300);
+			contenido.controls = true;
+			const fuente = document.createElement("source");
+			//console.log(json.path[i]);
+			fuente.setAttribute("src", json.path[i]);
+			fuente.setAttribute("type", "video/mp4");
+			fuente.id = "video"+i;
+			console.log(fuente.id)
+			contenido.appendChild(fuente);
+			//contenido.load();
+			vpath.appendChild(contenido);
+							
+			//Creamos celda del titulo, poenemos valor
+			const vtitulo = document.createElement('td');
+			const titulo = document.createElement('p');
+			titulo.innerText = json.titulos[i];
+			console.log(fuente);
+			console.log(titulo);
+			titulo.setAttribute("onclick", `reproducir('${fuente.src}')`);
+			vtitulo.append(titulo);
+			//const votos = document.createElement('td');
+			const megusta = document.createElement('button');
+			megusta.classList.add("btn-danger");
+			
+			megusta.id = "b"+i;
+			console.log(megusta.id);
+			megusta.setAttribute("onclick", `borrarVideo('video${i}')`);
+			
+			//var button = document.createElement('i');
+			//button.classList.add("bi-heart-fill");
+			//megusta.append(button);
+			megusta.innerText = "Borrar";
+			//var button='<button class="btn btn-primary"><i class="bi-heart-fill"></i>Like+</button>';
+														
+			//Añadimos celdas a la fila 
+			filaNueva.appendChild(vpath);
+			filaNueva.appendChild(vtitulo);
+			filaNueva.appendChild(megusta);
+			i++;
+		}
+		//Añadimos la fila a la tabla 
+		document.getElementById("table_body").appendChild(filaNueva);
+	}
+	/*for(var i = 0; i < length; i++){
 		console.log(json.path[i] + ", " + json.titulos[i]);
 		const videoPrincipal = document.getElementById("video"+i);
 		videoPrincipal.setAttribute("src", json.path[i]);
@@ -71,12 +152,47 @@ function rellenarVideos(json){
 		vtitulo.innerText = json.titulos[i];
 		//const votos = document.createElement('td');
 		//const megusta = document.createElement('td');
-	}
+	}*/
 }
 
+function borrarVideo(idVideo){
+	console.log(idVideo);
+	var path_video = document.getElementById(idVideo).src;
+	console.log(path_video);
+	var asd=$.get(
+		"http://44.193.104.138/login_gateway.php",
+
+		    {method : "borrarVideo", path : path_video},
+		    function(data) {
+
+		        function jsonEscape(str)  {
+		                return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+		        }
+
+		       var json=JSON.parse(data);
+		       json=JSON.parse(json);
+			   console.log(json)
+			   window.location.replace(json.redirect)
+			}
+		)
+		.fail(function() {
+		    alert( "error" );
+		}
+	);
+}
+
+function reproducir(path){
+	console.log(path);
+	window.location.replace(href="reproducir.html?path="+path);
+}
+
+function sleepFor(sleepDuration){
+    var now = new Date().getTime();
+    while(new Date().getTime() < now + sleepDuration){ /* Do nothing */ }
+}
 
 function uploadvideo(){
-	var usuario = getUrlParameter('user');
+	var usuario = getCookie('user');
 	window.location.replace(href="upload.html?user="+usuario);
 }
 
@@ -99,7 +215,7 @@ function uploadvideo(){
 				<!-- Logo Cuenta -->
 				<div id="card">
 					<img src="./usuario.jpg" class="rounded-circle" width="80">
-					<p class="mb-0 text-center" id="name">Nombre</p> <span class="text-muted d-block mb-2" class="usuario"></span>
+					<p class="mb-0 text-center" id="name">User</p> <span class="text-muted d-block mb-2" id="usuario"></span>
 				</div>
 			</div>
 		</div>
@@ -129,23 +245,28 @@ function uploadvideo(){
                 <img src="./usuario.jpg" class="rounded-circle" width="200">
             </div>
 			<div class="col-md-2">
-				<h4 class="mb-0">Nombre</h4> <span class="text-muted d-block mb-2" class="usuario"></span> 
+				<h4 class="mb-0">Usuario</h4> <span id="usuario1"></span> 
             </div>
 			
 			<!-- Ultimo video subido -->
 			<div class="col-md-6">
 			<div class="col" style="margin-left: 5%;">
                 <h1>Ultimo video subido</h1>
-				<video id="cvideo0" width="500" height="300" controls>
-					<source id="video0" src="" type="video/mp4">
+				<video id="cvideo" width="500" height="300" controls>
+					<source id="video" src="" type="video/mp4">
 				</video>
-				<p id="pVideo0"></p>
+				<p id="pVideo"></p>
 				<button type="button" class="btn btn-danger"><i class="bi-backspace"></i> Borrar</button>
             </div>
 			</div>
         </div>
+		
+		<table class="table table-striped table-bordered table-hover table-responsive-sm" id="tabla_resultados">
+			<tbody id="table_body" >
+			</tbody>
+		</table>
 				
-		<!-- Otros videos de la cuenta -->
+		<!-- Otros videos de la cuenta 
 		<div class="row p-3">
 			<div class="row">
 				<div class="col-4 border">
@@ -175,7 +296,7 @@ function uploadvideo(){
 				</div>
 				
 			</div>
-		</div>  
+		</div>  -->
 
 	</body>
 </html>

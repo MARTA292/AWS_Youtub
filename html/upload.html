@@ -26,6 +26,37 @@ function getUrlParameter(sParam) {
     return false;
 }
 
+function getCookie(cname) {
+	
+  let name = cname + "=";
+
+  let decodedCookie = decodeURIComponent(document.cookie);
+
+  let ca = decodedCookie.split(';');
+
+  for(let i = 0; i <ca.length; i++) {
+
+    let c = ca[i];
+
+    while (c.charAt(0) == ' ') {
+
+      c = c.substring(1);
+
+    }
+
+    if (c.indexOf(name) == 0) {
+
+      return c.substring(name.length, c.length);
+
+    }
+
+  }
+
+  return "";
+
+}
+
+var user  = "";
 
 function getAWSKeys() {
 
@@ -41,15 +72,12 @@ function getAWSKeys() {
 		       document.getElementById("X-Amz-Date").value = json.amzDate;		
 		       document.getElementById("X-Amz-Signature").value = json.stringSigned;	
 		       document.getElementById("X-Amz-Security-Token").value = json.securityToken;	
-			
+			   alert("oquei");
 		    }
 		)
-}
-
-function setKeyFilename() {
-	var tuser = getUrlParameter("user");
-	var user;
-	var asd=$.get(
+	sleepFor(3000)
+	var tuser = getCookie("user");
+	var asd2=$.get(
 		"http://44.193.104.138/login_gateway.php",
 		{method : "validacionUsuario", token : tuser},
 		function(data) {
@@ -57,17 +85,19 @@ function setKeyFilename() {
 			var json=JSON.parse(data);
 			json=JSON.parse(json);
 			
-			user = json.usuario;		
+			user = json.usuario;
+			alert(user);
+			alert(user.length);
 		}
-	).done(function() {
-        document.getElementById("key").value = user+"/"+document.getElementById("file").value.substring(document.getElementById("file").value.lastIndexOf('\\')+1);
-		console.log(document.getElementById("key").value)
-		console.log(document.getElementById("file").value)
-		
-		rellenarDatos(user);
-    })
-	//rellenarDatos();
-	sleepFor(5000);
+	);
+}
+
+function setKeyFilename() {
+	document.getElementById("key").value = user+'/'+document.getElementById("file").value.substring(document.getElementById("file").value.lastIndexOf('\\')+1);
+	console.log(document.getElementById("key").value)
+	console.log(document.getElementById("file").value)
+	rellenarDatos();
+	sleepFor(3000)
 }
 
 function sleepFor(sleepDuration){
@@ -79,25 +109,22 @@ function sleepFor(sleepDuration){
 }
 
 
-function rellenarDatos(vusuario) {
+function rellenarDatos() {
 	var videoname=document.getElementById("videoname").value;
 	var etiquetas=document.getElementById("etiquetas").value;
 	console.log("entrando en rellenar datos");
 	console.log(videoname)
 	console.log(etiquetas)
-	console.log(vusuario)
 	vpath = document.getElementById("key").value;
 	console.log(vpath)
 	var asdf=$.get(
 		"http://44.193.104.138/login_gateway.php",
-		{method : "subirVideo", titulo : videoname, tag : etiquetas, usuario : vusuario, path : vpath},
+		{method : "subirVideo", titulo : videoname, tag : etiquetas, usuario : user, path : vpath},
 		function(data) {
 
 			var json=JSON.parse(data);
 			json=JSON.parse(json);
 			console.log("ha cargado un json")
-            window.location.replace(json.redirect+"?user="+getUrlParameter('user'));
-
 		}
 	).done(function(){});
 }

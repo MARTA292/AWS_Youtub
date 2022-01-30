@@ -18,9 +18,9 @@
 
                                 var vres="";
                                 var asd=$.get(
-                                "http://44.193.104.138/register_gateway.php",
+                                "http://44.193.104.138/login_gateway.php",
 
-                                    {nombreCompleto : vop1, username : vop2, email : vemail, password : vpassword, frase : vfrase},
+                                    {method : "register", nombreCompleto : vop1, username : vop2, email : vemail, password : vpassword, frase : vfrase},
                                     function(data) {
 
                                         function jsonEscape(str)  {
@@ -45,10 +45,10 @@
                                 alert( "second finished" );
                                 });
 
-
                   });
                 });
         </script>
+
 
         
     </head>

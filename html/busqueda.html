@@ -28,11 +28,11 @@
 				       json=JSON.parse(json);
 					   console.log(json);
 					   console.log(json.titulos[1]);
-					   var length = Object.keys(json).length;
+					   var length = json.path.length;
 					   console.log(length);
 					   //console.log(json.path[0], json.titulos[0]);
 					   //{path: Array(4), titulos: Array(4)}
-					   for(var i = 0; i < length*2; i++){
+					   for(var i = 0; i < length; i++){
 							console.log(json.path[i] + ", " + json.titulos[i]);
 							//Creamos fila
 							const filaNueva = document.createElement("tr");

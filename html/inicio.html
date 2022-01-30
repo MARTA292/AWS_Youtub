@@ -13,21 +13,52 @@
 	<title>Inicio</title>
 <script>
 
-var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-	sURLVariables = sPageURL.split('&'),
-	sParameterName,
-	i;
-
-    for (i = 0; i < sURLVariables.length; i++) {
-	sParameterName = sURLVariables[i].split('=');
-
-	if (sParameterName[0] === sParam) {
-	    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+function getCookie(cname) {
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i <ca.length; i++) {
+		let c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+			return c.substring(name.length, c.length);
+		}
 	}
-    }
-    return false;
-};
+	return "";
+}
+
+$(document).ready(function(){
+
+    var usuario = getCookie('user');
+	
+	var asd=$.get(
+		"http://44.193.104.138/login_gateway.php",
+
+		    {method : "validacionUsuario", token : usuario},
+		    function(data) {
+
+		        function jsonEscape(str)  {
+		            return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t").replace(/\\/g,"");
+		        }
+
+				var json=JSON.parse(data);
+				json=JSON.parse(json);
+
+				if (json.redirect == "login.html"){
+                    window.location.replace(json.redirect);
+				}else{
+					$("#usuario").text(json.usuario);
+                }
+		    }
+		);
+	});
+
+function reproducir(path){
+	window.location.replace(href="reproducir.html?path="+path);
+}
+		
 
 </script>
 
@@ -72,7 +103,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 						<source id="video1" src="https://bucketyoutubedm.s3.amazonaws.com/apruebanosestamoshechosparaentendernos.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
-					<p id="pVideo1">Estamos hechos para entendernos</p>
+					<p id="pVideo1" onclick=reproducir("http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/apruebanosestamoshechosparaentendernos.mp4")>Estamos hechos para entendernos</p>
 					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
 				</div>
 				<div class="col-4 border">
@@ -80,7 +111,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 						<source id="video2" src="https://bucketyoutubedm.s3.amazonaws.com/batman%26catwoman.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
-					<p id="pVideo2">Batman & Catwoman</p>
+					<p id="pVideo2" onclick=reproducir("http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/batman%26catwoman.mp4")>Batman & Catwoman</p>
 					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
 				</div>
 				<div class="col-4 border">
@@ -88,7 +119,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 						<source id="video3" src="https://bucketyoutubedm.s3.amazonaws.com/cuarentones.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
-					<p id="pVideo3">Cuarentones</p>
+					<p id="pVideo3" onclick=reproducir("http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/cuarentones.mp4")>Cuarentones</p>
 					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
 					
 				</div>
@@ -102,7 +133,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 						<source id="video1" src="https://bucketyoutubedm.s3.amazonaws.com/deadpool.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
-					<p id="pVideo1">Deadpool</p>
+					<p id="pVideo1" onclick=reproducir("http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/martuski/deadpool.mp4")>Deadpool</p>
 					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
 				</div>
 				<div class="col-4 border">
@@ -110,7 +141,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 						<source id="video2" src="https://bucketyoutubedm.s3.amazonaws.com/deathonthenile.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
-					<p id="pVideo2">Death on the Nile</p>
+					<p id="pVideo2" onclick=reproducir("http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/deathonthenile.mp4")>Death on the Nile</p>
 					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
 				</div>
 				<div class="col-4 border">
@@ -118,7 +149,7 @@ var getUrlParameter = function getUrlParameter(sParam) {
 						<source id="video3" src="https://bucketyoutubedm.s3.amazonaws.com/operationfortune.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
-					<p id="pVideo3">Operation Fortune</p>
+					<p id="pVideo3" onclick=reproducir("http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/operationfortune.mp4")>Operation Fortune</p>
 					<button type="button" class="btn btn-danger"><i class="bi-heart-fill"></i> Like</button>
 					
 				</div>

@@ -5,7 +5,7 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <link rel="stylesheet" href="./style_login.css">
-        
+        <?php include 'login.php';?>
         <title>Login</title>
         <script>
 		$(document).ready(function(){
@@ -17,7 +17,7 @@
 				var asd=$.get(
 				"http://44.193.104.138/login_gateway.php",
 
-				    {usuario : vop1, password : vop2},
+				    {method : "login", usuario : vop1, password : vop2},
 				    function(data) {
 
 				        function jsonEscape(str)  {
@@ -27,7 +27,15 @@
 				       var json=JSON.parse(data);
 				       json=JSON.parse(json);
 
-				       window.location.replace(json.redirect);
+				       if (json.redirect == "perfil.html"){
+							  document.cookie="user="+ json.token;
+							  window.location.replace(json.redirect + "?user=" + json.token);
+						  }
+						  else{
+							  document.cookie="user=";
+							  window.location.replace(json.redirect);
+						  }
+
 
 				    }
 				)
@@ -66,7 +74,6 @@
                     </form>
                         <button class="btn btn-primary" id="boton_submit" >Login</button>
                     <p>Don't have an account? <a href="register.html">Register now!</a></p>
-					<p>Have you forget your password? <a href="recovery.html">Recover password</a></p>
                 </div>
             </div>
         </div>
