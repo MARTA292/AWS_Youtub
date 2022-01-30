@@ -1,0 +1,61 @@
+import sys
+import logging
+import pymysql
+import json
+
+def lambda_handler(event, context):
+    
+    rds_host = "44.193.104.138"
+    username = "admin"
+    password ="password"
+    dbname = "yutub"
+ 
+    try:
+        conn = pymysql.connect(rds_host, user=username, passwd=password, db=dbname, connect_timeout=10, port=3306)
+    except pymysql.MySQLError as e:
+        print (e)
+        sys.exit()
+    # TODO implement
+    usuario=event["queryStringParameters"]["usuario"]
+    password=event["queryStringParameters"]["password"]
+    
+    print(usuario)
+    print(password)
+    token = 0
+    redirectPage = 'login.html'
+    try:
+        print(1)
+        with conn.cursor() as cur:
+            print(2)
+            cur.execute("select nombreUsuario,password from user where nombreUsuario='" + usuario + "' AND password='" + password + "'")
+            print(3)
+            print("hola mundo")
+            if (cur.fetchone() is not None):
+                redirectPage='perfil.html'
+                cur.execute("update logs set intentos=0 where nombreUsuario='" + usuario + "'")
+                cur.execute("update logs set session=1 where nombreUsuario='" + usuario + "'")
+                cur.execute("select token from logs where nombreUsuario='" + usuario +"'")
+                token = cur.fetchone()[0]
+            else:
+                print(4)
+                cur.execute("select nombreUsuario from user where nombreUsuario='" + usuario +"'")
+                if (cur.fetchone() is not None):
+                    cur.execute("update logs set intentos=intentos+1 where nombreUsuario='" + usuario + "'")
+                    cur.execute("select intentos from logs where nombreUsuario='" + usuario +"'")
+                    nintentos = cur.fetchone()[0]
+                    if (nintentos == 3):
+                        cur.execute("delete from logs where nombreUsuario='" + usuario +"'")
+                        cur.execute("delete from user where nombreUsuario='" + usuario +"'")
+            conn.commit()
+
+            cur.close()                
+        conn.close()            
+                
+    except pymysql.MySQLError as e:    
+        print (e)
+    
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps({'redirect' : redirectPage, 'token' : token})
+    }

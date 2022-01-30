@@ -1,0 +1,68 @@
+import sys
+import logging
+import pymysql
+import json
+
+def lambda_handler(event , context):
+    
+    rds_host = "44.193.104.138"
+
+    username = "admin"
+    password ="password"
+    dbname = "yutub"
+    
+    try:
+        conn = pymysql.connect(rds_host, user=username, passwd=password, db=dbname, connect_timeout=10, port=3306)
+    except pymysql.MySQLError as e:
+        print (e)
+        sys.exit()
+    
+    comentarios = []
+    votos = 0
+    
+    #token=event["queryStringParameters"]["token"]
+    pathVideo=event["queryStringParameters"]["path"]
+    print(pathVideo)
+    
+    try:
+        with conn.cursor() as cur:
+            #cur.execute("select nombreUsuario from logs where token='" + str(token) + "'")
+            #nombreUsuario = cur.fetchone()[0]
+            #print(nombreUsuario)
+            
+            cur.execute("select idVideo from videos where path='"+ pathVideo + "'")
+            numVideo = cur.rowcount
+            print(numVideo)
+            if numVideo > 0:
+                idVideo = cur.fetchone()[0]
+                print(idVideo)
+                cur.execute("select titulo from videos where path='"+ pathVideo + "'")
+                titulo = cur.fetchone()[0]
+                #Buscar los votos
+                cur.execute("select valor from votos where idVideo='"+ str(idVideo) + "'")
+                numVoto = cur.rowcount
+                print(numVoto)
+                if numVoto > 0:
+                    votos = cur.fetchone()[0]
+                #Buscar los comentarios
+                #cur.execute("select count(contenido) from comentarios where idVideo='"+ str(idVideo) + "'")
+                cur.execute("select nombreUsuario, contenido from comentarios where idVideo='"+ str(idVideo) + "'")
+                ncomentarios = cur.rowcount
+                if ncomentarios > 0:
+                    for i in range(ncomentarios):
+                        comentario = cur.fetchone()
+                        comentarios.append(comentario)
+                
+                print(comentarios)
+            else: 
+                print("No existe la busqueda")
+            
+        conn.close()       
+
+    except pymysql.MySQLError as e:    
+        print (e)
+    return {
+        'statusCode': 200,
+        'headers': { 'Access-Control-Allow-Origin' : '*' },
+        'body' : json.dumps( { 'path' : pathVideo, 'titulo' : titulo, 'comentarios' : comentarios, 'voto' : votos} )
+    }

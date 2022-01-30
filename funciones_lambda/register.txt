@@ -1,0 +1,47 @@
+import sys
+import logging
+import pymysql
+import json
+
+def lambda_handler(event , context):
+    
+    rds_host = "44.193.104.138"
+
+    username = "admin"
+    password ="password"
+    dbname = "yutub"
+    
+    try:
+        conn = pymysql.connect(rds_host, user=username, passwd=password, db=dbname, connect_timeout=10, port=3306)
+    except pymysql.MySQLError as e:
+        print (e)
+        sys.exit()
+    
+    nombreCompleto=event["queryStringParameters"]["nombreCompleto"];
+    username=event["queryStringParameters"]["username"];
+    email=event["queryStringParameters"]["email"];
+    password=event["queryStringParameters"]["password"];
+    frase=event["queryStringParameters"]["frase"];
+    
+    redirectPage = 'register.html'
+    if (nombreCompleto != "" and username != "" and email != "" and password != "" and frase != ""):
+        print("no hay ningun valor vacio")
+        try:
+            with conn.cursor() as cur:
+                cur.execute("insert into user values ('" + username+"','"+nombreCompleto+"','" +email+ "','" + password+ "','" +frase+"')")
+                conn.commit()
+                cur.execute("insert into logs (nombreUsuario, intentos, session) values ('" + username+"', 0, 0)")
+                conn.commit()
+                print("ha hecho el insert de loggs")
+                redirectPage = 'login.html'
+                cur.close()
+        except pymysql.MySQLError as e:    
+            print (e)
+            
+        conn.close()
+    return {
+        'statusCode': 200,
+        'headers': { 'Access-Control-Allow-Origin' : '*' },
+        'body' : json.dumps( {'redirect': redirectPage} )
+    }
+#  

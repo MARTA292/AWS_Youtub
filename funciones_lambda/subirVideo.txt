@@ -1,0 +1,39 @@
+import sys
+import logging
+import pymysql
+import json
+    
+def lambda_handler(event , context):
+    
+    rds_host = "44.193.104.138"
+    username = "admin"
+    password ="password"
+    dbname = "yutub"
+    
+    titulo=event["queryStringParameters"]["titulo"]
+    tags=event["queryStringParameters"]["tag"]
+    usuario=event["queryStringParameters"]["usuario"]
+    path=event["queryStringParameters"]["path"]
+
+    redirectPage="upload.html";
+    
+    try:
+        conn = pymysql.connect(rds_host, user=username, passwd=password, db=dbname, connect_timeout=10, port=3306)
+        with conn.cursor() as cur:
+            cur.execute("insert into videos (nombreUsuario, titulo, path, tags) values ('" + usuario +"','" + titulo +"','http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/" + path + "','" + tags + "')")
+            conn.commit()
+            cur.execute("select idVideo from videos where path='http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/" + path + "'")
+            idVideo = cur.fetchone()[0]
+            cur.execute("insert into votos (idVideo, valor) values ('" + str(idVideo) +"', 0)")
+            conn.commit()
+            redirectPage="perfil.html";
+            cur.close()
+        conn.close()
+    
+    except pymysql.MySQLError as e:    
+        print (e)
+    return {
+        'statusCode': 200,
+        'headers': { 'Access-Control-Allow-Origin' : '*' },
+        'body' : json.dumps( {'redirect': redirectPage} )
+    }

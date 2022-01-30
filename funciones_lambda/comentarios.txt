@@ -1,0 +1,33 @@
+import sys
+import logging
+import pymysql
+import json
+
+def lambda_handler(event , context):
+    rds_host = "44.193.104.138"
+
+    username = "admin"
+    password ="password"
+    dbname = "yutub"
+
+    usuario = event["queryStringParameters"]["user"]
+    path=event["queryStringParameters"]["path"]
+    comentario = event["queryStringParameters"]["comentario"]
+    
+    try:
+        conn = pymysql.connect(rds_host, user=username, passwd=password, db=dbname, connect_timeout=10, port=3306)
+
+        with conn.cursor() as cur:
+            cur.execute("select idVideo from videos where path='" + path +"'")
+            idVideo = cur.fetchone()[0]
+            cur.execute("insert into comentarios (nombreUsuario, idVideo, contenido) values ('" + usuario + "','" + str(idVideo) + "','" + comentario + "')")
+            conn.commit()
+        conn.close()
+    except pymysql.MySQLError as e:    
+        print (e)
+        
+    return {
+        'statusCode': 200,
+        'headers': { 'Access-Control-Allow-Origin' : '*' },
+        'body' : json.dumps( { } )
+    }

@@ -1,0 +1,47 @@
+import sys
+import logging
+import pymysql
+import json
+
+def lambda_handler(event , context):
+    
+    rds_host = "44.193.104.138"
+
+    username = "admin"
+    password ="password"
+    dbname = "yutub"
+    
+    try:
+        conn = pymysql.connect(rds_host, user=username, passwd=password, db=dbname, connect_timeout=10, port=3306)
+    except pymysql.MySQLError as e:
+        print (e)
+        sys.exit()
+    
+    pathVideos = []
+    titulos = []
+    
+    token=event["queryStringParameters"]["token"];
+    
+    try:
+        with conn.cursor() as cur:
+            print("hola mundo")
+            cur.execute("select nombreUsuario from logs where token='" + str(token) + "'")
+            nombreUsuario = cur.fetchone()[0]
+            print(nombreUsuario)
+            cur.execute("select path, titulo from videos where nombreUsuario='"+ nombreUsuario + "'")
+            print("hola mundo")
+            path = cur.fetchone()
+    
+            while (path is not None):
+                pathVideos.append(path[0])
+                titulos.append(path[1])
+                path = cur.fetchone()
+        conn.close()       
+
+    except pymysql.MySQLError as e:    
+        print (e)
+    return {
+        'statusCode': 200,
+        'headers': { 'Access-Control-Allow-Origin' : '*' },
+        'body' : json.dumps( { 'path' : pathVideos, 'titulos' : titulos} )
+    }
