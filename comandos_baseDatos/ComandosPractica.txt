@@ -12,3 +12,28 @@ USE yutub;
 SHOW tables;
 SELECT * FROM videos;
 
+#Buscar por tag
+select * from videos where tags LIKE '%trailer%';
+
+#Mostrar el usuario con el video que ha subido y sus comentarios
+select v.nombreUsuario, v.titulo, c.contenido from videos v inner join comentarios c where c.idVideo=v.idVideo;
+
+#Mostrar el usuario con el video que ha subido y sus votos
+select v.nombreUsuario, v.titulo, p.valor from videos v inner join votos p where p.idVideo=v.idVideo;
+
+#Mostrar todos los videos de un usuario concreto
+select u.nombreUsuario, v.titulo from user u inner join videos v where u.nombreCompleto=v.nombreUsuario and v.nombreUsuario="marta";
+
+#Mostrar los votos de un video concreto y quién lo ha subido
+select v.nombreUsuario, v.titulo, p.valor from videos v inner join votos p where p.idVideo=v.idVideo and v.idVideo=1;
+
+select c.nombreUsuario, v.titulo, c.contenido from videos v inner join comentarios c where c.idVideo=v.idVideo and v.idVideo=1;
+
+#Buscar videos de un determinado token
+select nombreUsuario, path, titulo from videos where nombreUsuario=(select nombreUsuario from logs where token=1);
+
+#Cambiar un dato de la tabla videos
+update videos set nombreUsuario="martuski" where nombreUsuario="marta";
+update videos set nombreUsuario="martuski" where nombreUsuario="dani”;
+
+

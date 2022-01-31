@@ -7,3 +7,26 @@ create table videos (idVideo INT not null auto_increment, nombreUsuario varchar(
 create table comentarios (idComentario int not null auto_increment, nombreUsuario varchar(30), idVideo int, contenido varchar(255), primary key (idComentario),  foreign key (nombreUsuario) references user (nombreUsuario), foreign key (idVideo) references videos (idVideo));
 
 create table votos (idVoto int not null auto_increment, nombreUsuario varchar(30), idVideo int, idComentario int, valor int, primary key (idVoto),  foreign key (nombreUsuario) references user (nombreUsuario), foreign key (idVideo) references videos (idVideo), foreign key (idComentario) references comentarios (idComentario));
+
+create table logs (nombreUsuario varchar(30) not null, intentos int, token int not null auto_increment, session Bool, primary key (token));
+
+
+
+insert into videos (idVideo, nombreUsuario, titulo, size, path, tags) values         
+(1, 'martuski', 'Batman y Catwoman', 8572, 'http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/martuski/batman%26catwoman.mp4', 'cine trailer'),         
+(2, 'martuski', 'Cuarentones', 12840, 'http://bucketyoutubedm.s3-website-us-east-1.amazonaws.com/martuski/cuarentones.mp4', 'cine trailer'),         
+(3, 'martuski', 'Deadpool', 15816, 'http://bucketyoutubedm.s3.website-us-east-1.amazonaws.com/martuski/deadpool.mp4', 'cine trailer'),         
+(4, 'martuski', 'Death on the Nile', 8050, 'http://bucketyoutubedm.s3.website-us-east-1.amazonaws.com/martuski/deathonthenile.mp4', 'cine trailer');
+
+insert into comentarios (idComentario, nombreUsuario, idVideo, contenido) values
+    	(1,'dani', 1, 'Buenísima película, la recomiendo'),
+    	(2,'martuski', 1, 'No la he visto, pero el trailer promete'),
+    	(3,'martuski', 2, 'Super divertida, sino la habeís visto la recomiendo'),
+    	(4,'dani', 3, 'Buenísima, de las mejores pelis'),
+    	(5,'dani', 4, 'Fiel a los libros');
+   	 
+insert into votos (idVoto, nombreUsuario, idVideo, idComentario, valor) values
+    (1,'dani', 1, 1, 5),
+    	(2,'martuski', 2, 2, 10),
+    	(3,'martuski', 3, 3, 0),
+    	(4,'dani', 4, 4, 20);
